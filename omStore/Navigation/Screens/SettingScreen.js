@@ -152,7 +152,7 @@ export default function SettingScreen() {
   
 
 
-  const chooseImage = async () => {
+  const chooseImage = async (s) => {
     try {
       const image = await ImagePicker.openPicker({
         width: 300,
@@ -164,11 +164,11 @@ export default function SettingScreen() {
 
       
 
-      const reference = storage().ref("/qrcode");
+      const reference = storage().ref("/qrcode" + String(s));
       reference.putFile(String(image.path)).then(async () => {
         const url = await reference.getDownloadURL();
         console.log(url);
-        firestore().collection('qrcode').doc('qrcode').set({
+        firestore().collection('qrcode').doc('qrcode'+String(s)).set({
           qrcode: url,
         }).then(() => {
           
@@ -343,8 +343,22 @@ export default function SettingScreen() {
       </View>
 
       <View style={{margin:10, padding:16, borderRadius:10,justifyContent:'center', alignItems:'center', backgroundColor:'#9b59b6'}} >
-          <TouchableOpacity onPress={chooseImage}>
-            <Text style={{color:'white', fontSize:16, fontWeight:'900'}}>Change Qr Code</Text>
+          <TouchableOpacity onPress={() =>chooseImage('1')}>
+            <Text style={{color:'white', fontSize:16, fontWeight:'900'}}>Change Qr Code 1</Text>
+
+          </TouchableOpacity>
+      </View>  
+
+      <View style={{margin:10, padding:16, borderRadius:10,justifyContent:'center', alignItems:'center', backgroundColor:'#9b59b6'}} >
+          <TouchableOpacity onPress={() => chooseImage('2')}>
+            <Text style={{color:'white', fontSize:16, fontWeight:'900'}}>Change Qr Code 2</Text>
+
+          </TouchableOpacity>
+      </View>  
+
+      <View style={{margin:10, padding:16, borderRadius:10,justifyContent:'center', alignItems:'center', backgroundColor:'#9b59b6'}} >
+          <TouchableOpacity onPress={()=>chooseImage('3')}>
+            <Text style={{color:'white', fontSize:16, fontWeight:'900'}}>Change Qr Code 3</Text>
 
           </TouchableOpacity>
       </View>  

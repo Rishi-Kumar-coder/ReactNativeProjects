@@ -14,7 +14,7 @@ export default function ProductView({route, navigation}) {
 
   const productCollection = firestore().collection('products');
 
-  const {productID,daily, productName,productHindiName,productCategory,productSubCategory, productDescription, productPrice, productDiscount, productUrl, productGST, productCode, productSelling} = route.params;
+  const {productID,daily,forDelivery, productName,productHindiName,productCategory,productSubCategory, productDescription, productPrice, productDiscount, productUrl, productGST, productCode, productSelling} = route.params;
   const productMRP = parseInt(productPrice) -parseInt(productDiscount);
 
   const [updateProducName, setUpdateProductName] = useState(productName);
@@ -28,6 +28,7 @@ export default function ProductView({route, navigation}) {
   const [updateProductCode, setUpdateProductCode] = useState(productCode);
   const [updateProductSelling, setUpdateProductSelling] = useState(productSelling);
   const [updateDaily  , setUpdateDaily] = useState(daily);
+  const [updateForDelivery, setUpdateForDelivery] = useState('');
 
   const [inputPass, setInputPass] = useState("");
   const [passWordModal , setPassWordModal] = useState(false);
@@ -74,6 +75,7 @@ export default function ProductView({route, navigation}) {
       productCatagory: updateProductCategory,
       productSubCatagory: updateProductSubCategory,
       daily: updateDaily,
+      forDelivery: updateForDelivery
     }).then(() => { 
 
       setSpinner(false)
@@ -152,8 +154,15 @@ export default function ProductView({route, navigation}) {
 
       <Text style={{marginLeft:10, fontSize:15, color:'black'}}>Daily(put 1 for Daily Deal) :</Text>
       <TextInput style={{margin:10, fontSize:30, fontWeight:'800',  color:'black', borderWidth:0.5, borderColor:'black', borderRadius:10}} value={daily} onChangeText={(text) => setUpdateDaily(text)}></TextInput>
+
+
+      <Text style={{marginLeft:10, fontSize:15, color:'black'}}>For delivery :</Text>
+      <TextInput style={{margin:10, fontSize:30, fontWeight:'800',  color:'black', borderWidth:0.5, borderColor:'black', borderRadius:10}} value={forDelivery} onChangeText={(text) => setUpdateForDelivery(text)}></TextInput>
+
+
       <Text style={{marginLeft:10, fontSize:15, color:'black'}}>Name :</Text>
       <TextInput style={{margin:10, fontSize:30, fontWeight:'800',  color:'black', borderWidth:0.5, borderColor:'black', borderRadius:10}} value={updateProducName} onChangeText={(text) => setUpdateProductName(text)}></TextInput>
+
 
       <Text style={{marginLeft:10, fontSize:15, color:'black'}}>Hindi Name :</Text>
       <TextInput style={{margin:10, fontSize:30, fontWeight:'800',  color:'black', borderWidth:0.5, borderColor:'black', borderRadius:10}} value={updateProductHindiName} onChangeText={(text) => setUpdateProductHindiName(text)}></TextInput>

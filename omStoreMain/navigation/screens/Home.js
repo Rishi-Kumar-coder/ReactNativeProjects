@@ -384,7 +384,7 @@ export default function Home({navigation, route}) {
 
         <Text style={{textAlign:'center',top:-40,fontSize:60,color:'black' }}>. . . . .</Text>
 
-        <Text style={{fontSize: 20,textDecorationLine:'underline', color: 'red',textAlign:'center', padding: 15, fontWeight: '900'}}> Deals of The Day </Text>
+        <Text style={{fontSize: 20,textDecorationLine:'underline',top:-65, color: 'red',textAlign:'center', padding: 15, fontWeight: '900'}}> Deals of The Day </Text>
 
 <FlatList
           style={{
@@ -395,6 +395,7 @@ export default function Home({navigation, route}) {
             marginTop:10,
             alignSelf:'center',
             flex: 1,
+            top:-85,
             alignContent: 'center',
             
           }}
@@ -424,7 +425,7 @@ export default function Home({navigation, route}) {
           )}
         />
 
-          <View style={{flexDirection:'row'}}>
+          <View style={{flexDirection:'row', top:-85}}>
         <TextInput
           style={{
             padding: 10,
@@ -455,7 +456,7 @@ export default function Home({navigation, route}) {
         <FlatList
               horizontal
               
-              style={{maxHeight:90}}
+              style={{maxHeight:90,top:-85}}
               data={Category_data}
               keyExtractor={(item) => item.category}
               
@@ -469,6 +470,7 @@ export default function Home({navigation, route}) {
             // marginEnd: 15,
             marginStart: 15,
             marginTop:10,
+            top:-85,
             alignSelf:'center',
             flex: 1,
             alignContent: 'center',

@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 
 
-const ItemCard = ({productName,daily,productHindiName,productCategory,productSubCategory, productDescription, productUrl, productPrice,  productDiscount, productID,productCode, productGST, productSelling, navigation}) => {
+const ItemCard = ({productName,forDelivery,daily,productHindiName,productCategory,productSubCategory, productDescription, productUrl, productPrice,  productDiscount, productID,productCode, productGST, productSelling, navigation}) => {
 
   
   
@@ -25,6 +25,7 @@ const ItemCard = ({productName,daily,productHindiName,productCategory,productSub
                                       productCategory: productCategory,
                                     productSubCategory: productSubCategory,
                                   productHindiName: productHindiName,
+                                forDelivery: forDelivery,
                                 daily: daily,});
     
   }

@@ -52,14 +52,15 @@ export default function CartScreen({ navigation, route }) {
   const [DeliviryCharge, setDeliveryCharge] = useState(0);
   const [postOffice, setPostOffice] = useState('');
   const [orderOTP, setOrderOTP] = useState('');
-  // const [allItemString, setAllItemString] = useState('');
   const [BillPDFPath, setBillPDFPath] = useState('');
   const [AllItems, setAllItems] = useState('');
   const [forBill, setForBill] = useState('');
 
   var allItemString = '';
 
-  const [qrCode, setQrCode] = useState('');
+  const [qrCode1, setQrCode1] = useState('');
+  const [qrCode2, setQrCode2] = useState('');
+  const [qrCode3, setQrCode3] = useState('');
 
   //1 --> List Empty
   //0 --> List Not Empty
@@ -67,11 +68,22 @@ export default function CartScreen({ navigation, route }) {
   var path = RNFS.DocumentDirectoryPath + '/test.txt';
 
 
+  // setisSpinnerVisible(true);
 
-
-  firestore().collection('qrcode').doc('qrcode').get().then(doc => {
+  firestore().collection('qrcode').doc('qrcode1').get().then(doc => {
     if (doc.exists) {
-      setQrCode(doc.data().qrcode);
+      setQrCode1(doc.data().qrcode);
+    }
+  })
+
+  firestore().collection('qrcode').doc('qrcode2').get().then(doc => {
+    if (doc.exists) {
+      setQrCode2(doc.data().qrcode);
+    }
+  })
+  firestore().collection('qrcode').doc('qrcode3').get().then(doc => {
+    if (doc.exists) {
+      setQrCode3(doc.data().qrcode);
     }
   })
 
@@ -90,6 +102,7 @@ export default function CartScreen({ navigation, route }) {
           firestore().collection('data').doc(String(doc.data().postOffice)).get().then(doc => {
             if (doc.exists) {
               setDeliveryCharge(doc.data().postValue);
+              setisSpinnerVisible(false);
             } else {
               // doc.data() will be undefined in this case
               console.log('No such document! in post ');
@@ -507,9 +520,29 @@ export default function CartScreen({ navigation, route }) {
         <ScrollView>
           <View style={{ flex: 1, backgroundColor: 'white', borderRadius: 20 }}>
             <Text style={{ fontSize: 30, margin: 20, color: '#514A9D', fontWeight: '900' }}>Pay At</Text>
+            <Text style={{textAlign:'center',color:'#514A9D'}}>Phone Pay</Text>
+            <ImageBackground resizeMode='contain' style={{ height: 200, width: '100%', alignSelf: 'center' }}
+              source={{ uri: qrCode1 }}
+
+            >
+              <TouchableOpacity onPress={saveToGallery} style={{ height: 200, width: '100%' }}></TouchableOpacity>
+
+
+            </ImageBackground>
+            <Text style={{textAlign:'center',color:'#514A9D'}}>Google Pay</Text>
 
             <ImageBackground resizeMode='contain' style={{ height: 200, width: '100%', alignSelf: 'center' }}
-              source={{ uri: qrCode }}
+              source={{ uri: qrCode2 }}
+
+            >
+              <TouchableOpacity onPress={saveToGallery} style={{ height: 200, width: '100%' }}></TouchableOpacity>
+
+
+            </ImageBackground>
+            <Text style={{textAlign:'center',color:'#514A9D'}}>Paytm</Text>
+
+            <ImageBackground resizeMode='contain' style={{ height: 200, width: '100%', alignSelf: 'center' }}
+              source={{ uri: qrCode3 }}
 
             >
               <TouchableOpacity onPress={saveToGallery} style={{ height: 200, width: '100%' }}></TouchableOpacity>
@@ -615,7 +648,7 @@ export default function CartScreen({ navigation, route }) {
                 style={{ width: 100, height: 100, tintColor: '#e74c3c' }}
                 source={require('../../assets/shopping-cart.png')}></Image>
 
-              <TextInput style={{ height: 50, borderColor: 'grey', borderWidth: 1, backgroundColor: 'white', borderRadius: 10, padding: 10, margin: 10, fontSize: 18, fontWeight: '800', color: 'grey' }}
+              <TextInput style={{top:-70,opacity:0, height: 50, borderColor: 'grey', borderWidth: 1, backgroundColor: 'white', borderRadius: 10, padding: 10, margin: 10, fontSize: 18, fontWeight: '800', color: 'grey' }}
                 placeholder="Enter Refferal Code"
                 onChangeText={text => setRefferalCode(text)}
                 keyboardType='numeric'

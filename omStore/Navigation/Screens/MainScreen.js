@@ -34,6 +34,7 @@ export default function MainScreen({navigation}) {
         productGST: doc.data().productGST,
         productCode: doc.data().productCode,
         productSelling: doc.data().productSelling,
+        forDelivery:doc.data().forDelivery,
         daily:doc.data().daily,
       }));
       setData(items);
@@ -65,6 +66,7 @@ export default function MainScreen({navigation}) {
       productGST: doc.data().productGST,
       productCode: doc.data().productCode,
       productSelling: doc.data().productSelling,
+      forDelivery:doc.data().forDelivery,
       daily:doc.data().daily,
 
     }));
@@ -93,6 +95,7 @@ export default function MainScreen({navigation}) {
       productGST: doc.data().productGST,
       productCode: doc.data().productCode,
       productSelling: doc.data().productSelling,
+      forDelivery:doc.data().forDelivery,
       daily:doc.data().daily,
 
     }));
@@ -136,9 +139,7 @@ export default function MainScreen({navigation}) {
         
         keyExtractor={(item) => item.productID}
         renderItem={({ item }) => <ItemCard productName={item.productName} 
-
                                             productID={item.productID}
-        
                                             productPrice={item.productPrice}
                                             productDiscount={item.productDiscount}
                                             productUrl={item.productImageUrl}
@@ -150,9 +151,8 @@ export default function MainScreen({navigation}) {
                                             productCategory={item.productCategory}
                                             productSubCategory={item.productSubCategory}
                                             productHindiName={item.productHindiName}
-                                            daily={item.daily}
-
-                                            />}
+                                            forDelivery={item.forDelivery}
+                                            daily={item.daily} />}
       />
     </View>
   )
