@@ -42,7 +42,7 @@ export default function CartScreen({ navigation, route }) {
   const [TotalDiscount, setTotalDiscount] = useState('');
   const [TotalCost, setTotalCost] = useState('');
   const [orderID, setOrderID] = useState('');
-  const [RefferalCode, setRefferalCode] = useState('0000');
+  const [RefferalCode, setRefferalCode] = useState('');
   const [data, setData] = useState([]);
   const [TotalAmount, setToatalAmount] = useState(0);
   const [IsEmpty, setIsEmpty] = useState(1);
@@ -84,6 +84,7 @@ export default function CartScreen({ navigation, route }) {
       firestore().collection('users').doc(contents).get().then(doc => {
         if (doc.exists) {
           setPostOffice(doc.data().postOffice);
+          setRefferalCode(doc.data().refferal);
 
 
           firestore().collection('data').doc(String(doc.data().postOffice)).get().then(doc => {
@@ -137,18 +138,20 @@ export default function CartScreen({ navigation, route }) {
         for (let index = 0; index < items.length; index++) {
           const element = items[index];
           let product_Cost = 0;
-          product_Cost = parseInt(element.productSelling)/1 + parseInt(element.productDiscount);
-          totalCost = totalCost + (parseInt(element.productPrice) + parseFloat(element.productPrice)*parseFloat(element.productGST)/100)*parseInt(element.productCount);
+          product_Cost = parseInt(element.productSelling) / 1 + parseInt(element.productDiscount);
+          totalCost = totalCost + (parseInt(element.productPrice) + parseFloat(element.productPrice) * parseFloat(element.productGST) / 100) * parseInt(element.productCount);
 
-          discount = discount + parseInt(element.productDiscount) * parseInt(element.productCount)/1;
-          TotalSelling = TotalSelling + parseInt(element.productSelling) * parseInt(element.productCount)/1;
+          discount = discount + parseInt(element.productDiscount) * parseInt(element.productCount) / 1;
+          TotalSelling = TotalSelling + parseInt(element.productSelling) * parseInt(element.productCount) / 1;
 
-          
-          
-          ToastAndroid.show( String(parseInt(element.productSelling) + parseInt(element.productDiscount)), ToastAndroid.SHORT);
+
+
+          ToastAndroid.show(String(parseInt(element.productSelling) + parseInt(element.productDiscount)), ToastAndroid.SHORT);
           allItemString = allItemString + `<tr>
                 <td >`+ element.productName + `</td>
                 <td>`+ product_Cost + `</td>
+                <td>`+ element.productGST + `%</td>
+
                 <td>`+ element.productDiscount + `</td>
                 <td>`+ element.productCount + `</td>
 
@@ -157,7 +160,7 @@ export default function CartScreen({ navigation, route }) {
                 </tr>`;
         }
         total = totalCost - discount;
-        
+
 
         setTotalDiscount(discount);
         setToatalAmount(TotalSelling);
@@ -217,11 +220,15 @@ export default function CartScreen({ navigation, route }) {
       const currentDate = date + '/' + month + '/' + year;
       const currentTime = hour + ':' + min;
 
-      const orderID = String(date) + String(month) + String(year) + String(hour) + String(min) + String(sec) ;
+      const orderID = String(date) + String(month) + String(year) + String(hour) + String(min) + String(sec);
 
       RNFS.readFile(path, 'utf8')
         .then(contents => {
           setuserEmail(contents);
+
+          firestore().collection('users').doc(contents).update({
+            refferal: RefferalCode,
+          })
 
 
           firestore()
@@ -235,6 +242,7 @@ export default function CartScreen({ navigation, route }) {
                 const userAddress = doc.data().address;
                 const userEmail = doc.data().email;
                 const userPost = doc.data().postOffice;
+                const refferal = doc.data().refferal;
 
                 setUserName(userName);
                 setUserPhone(userPhone);
@@ -244,7 +252,8 @@ export default function CartScreen({ navigation, route }) {
                 setOrderTime(currentTime);
                 setOrderAmount(TotalAmount);
                 setOrderID(orderID);
-                
+                // setRefferalCode(refferal);
+
 
 
                 //setting orders for order screen
@@ -287,6 +296,8 @@ export default function CartScreen({ navigation, route }) {
 <tr>
 <th>Product Name</th>
 <th>Price</th>
+<th>GST(%)</th>
+
 <th>Discount</th>
 <th>Quantity</th>
 
@@ -303,12 +314,12 @@ export default function CartScreen({ navigation, route }) {
 <h4 style="text-align: right;padding-Left:3%;padding-Right:3%;
   ">Total: ₹`+ TotalCost + `</h4>
   <h4 style="text-align: right; padding-Left:3%;padding-Right:3%;
-  ">Delevery:₹`+DeliviryCharge+`</h4>
+  ">Delevery:₹`+ DeliviryCharge + `</h4>
 
   <h4 style="text-align: right; padding-Left:3%;padding-Right:3%;
-  ">Discount:-₹`+TotalDiscount+`</h4>
+  ">Discount:-₹`+ TotalDiscount + `</h4>
   <h4 style="text-align: right; padding-Left:3%;padding-Right:3%;
-  ">Grand Total: ₹`+ TotalAmount+` + ₹`+ DeliviryCharge +`</h4>
+  ">Grand Total: ₹`+ TotalAmount + ` + ₹` + DeliviryCharge + `</h4>
   
 
 
@@ -336,7 +347,7 @@ export default function CartScreen({ navigation, route }) {
                     orderDiscount: TotalDiscount,
                     orderCost: TotalCost,
                     orderRefferal: RefferalCode,
-                    
+
 
                   })
                   .then(() => {
@@ -365,15 +376,8 @@ export default function CartScreen({ navigation, route }) {
                         );
                     }
 
-                    
-                    
-
-
-                    
-                    
                     createPDF(string, orderID);
 
-                    
                   });
 
 
@@ -387,7 +391,7 @@ export default function CartScreen({ navigation, route }) {
             });
 
 
-          
+
         })
         .catch(err => {
           //Reading File Error
@@ -417,9 +421,9 @@ export default function CartScreen({ navigation, route }) {
   }
 
 
- 
 
-  
+
+
 
   let saveToGallery = async () => {
     setisSpinnerVisible(true);
@@ -439,7 +443,7 @@ export default function CartScreen({ navigation, route }) {
           downloadImage();
         } else {
           downloadImage();
-          
+
         }
       } catch (err) {
         // To handle permission related exception
@@ -450,11 +454,11 @@ export default function CartScreen({ navigation, route }) {
 
   const downloadImage = () => {
     // Main function to download the image
-    
+
     // To add the time suffix in filename
     let date = new Date();
     // Image URL which we want to download
-    let image_URL = qrCode;    
+    let image_URL = qrCode;
     // Getting the extention of the file
     let ext = '.png';
     // ext = '.' + ext[0];
@@ -471,7 +475,7 @@ export default function CartScreen({ navigation, route }) {
         notification: true,
         path:
           PictureDir +
-          '/image_' + 
+          '/image_' +
           Math.floor(date.getTime() + date.getSeconds() / 2) +
           ext,
         description: 'Image',
@@ -486,7 +490,7 @@ export default function CartScreen({ navigation, route }) {
         setisSpinnerVisible(false);
         alert('Image Downloaded Successfully.');
       });
-      setisSpinnerVisible(false);
+    setisSpinnerVisible(false);
 
   };
 
@@ -496,57 +500,57 @@ export default function CartScreen({ navigation, route }) {
     <>
       <Spinner visible={isSpinnerVisible} textContent={'Placing Order...'} textStyle={{ color: 'white' }} />
 
- 
+
 
 
       <Modal visible={isModalVisible} transparent={true}>
-          <ScrollView>
-        <View style={{ flex: 1, backgroundColor: 'white', borderRadius: 20 }}>
-          <Text style={{ fontSize: 30, margin: 20, color: '#514A9D', fontWeight: '900' }}>Pay At</Text>
+        <ScrollView>
+          <View style={{ flex: 1, backgroundColor: 'white', borderRadius: 20 }}>
+            <Text style={{ fontSize: 30, margin: 20, color: '#514A9D', fontWeight: '900' }}>Pay At</Text>
 
-          <ImageBackground resizeMode='contain' style={{ height: 200,width: '100%', alignSelf: 'center' }}
-            source={{ uri: qrCode }}
+            <ImageBackground resizeMode='contain' style={{ height: 200, width: '100%', alignSelf: 'center' }}
+              source={{ uri: qrCode }}
 
-          >
-            <TouchableOpacity onPress={saveToGallery} style={{ height: 200, width: '100%' }}></TouchableOpacity>
-
-
-          </ImageBackground>
+            >
+              <TouchableOpacity onPress={saveToGallery} style={{ height: 200, width: '100%' }}></TouchableOpacity>
 
 
-          <Text style={{ fontSize: 30, margin: 20, color: '#514A9D', fontWeight: '900' }}>Order</Text>
-
-          <FlatList style={{ width: '90%', alignSelf: 'center', borderRadius: 10, borderWidth: 0.5, borderColor: 'black' }}
-            data={data}
-            keyExtractor={item => item.productID}
-
-            renderItem={({ item }) => (
-              <>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', margin: 10 }}>
-                  <Text style={{ width: '70%', fontSize: 13, color: 'black', fontWeight: '900' }}>{item.productName} X {item.productCount}</Text>
-                  <Text style={{ fontSize: 13, color: 'black', marginRight: 10, fontWeight: '700' }}>₹{parseInt(item.productSelling) * parseInt(item.productCount)}</Text>
-                </View>
-                <View style={{ height: 0.5, width: '100%', backgroundColor: '#514A9D' }}></View>
-              </>
-
-            )}
-
-          />
-          <Text style={{ fontSize: 20, color: '#514A9D', fontWeight: '700', margin: 10, alignSelf: 'flex-end' }}>Amount: ₹{TotalAmount}</Text>
-          <Text style={{ fontSize: 15, color: '#514A9D', fontWeight: '400', marginEnd: 10, alignSelf: 'flex-end', textDecorationLine:'line-through' }}>Delivery: +{parseInt(DeliviryCharge)+10}</Text>
-
-          <Text style={{ fontSize: 15, color: '#514A9D', fontWeight: '400', marginEnd: 10, alignSelf: 'flex-end' }}>Delivery: +{DeliviryCharge}</Text>
+            </ImageBackground>
 
 
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 20, width: '90%', margin: 20, height: 100 }}>
-            <TouchableOpacity onPress={() => setIsModalVisible(false)} style={{ flex: 1, height: '100%', justifyContent: 'center', alignItems: 'center', flex: 1, borderRadius: 10, margin: 5 }}>
-              <Text style={{ fontSize: 20, color: '#514A9D', fontWeight: '900' }}>Cancel</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => onBuy()} style={{ height: '100%', paddingStart: 20, paddingEnd: 20, backgroundColor: '#514A9D', justifyContent: 'center', alignItems: 'center', borderRadius: 10, flex: 1, margin: 5 }}>
-              <Text style={{ fontSize: 20, color: 'white', fontWeight: '900' }}>Buy</Text>
-            </TouchableOpacity>
+            <Text style={{ fontSize: 30, margin: 20, color: '#514A9D', fontWeight: '900' }}>Order</Text>
+
+            <FlatList style={{ width: '90%', alignSelf: 'center', borderRadius: 10, borderWidth: 0.5, borderColor: 'black' }}
+              data={data}
+              keyExtractor={item => item.productID}
+
+              renderItem={({ item }) => (
+                <>
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', margin: 10 }}>
+                    <Text style={{ width: '70%', fontSize: 13, color: 'black', fontWeight: '900' }}>{item.productName} X {item.productCount}</Text>
+                    <Text style={{ fontSize: 13, color: 'black', marginRight: 10, fontWeight: '700' }}>₹{parseInt(item.productSelling) * parseInt(item.productCount)}</Text>
+                  </View>
+                  <View style={{ height: 0.5, width: '100%', backgroundColor: '#514A9D' }}></View>
+                </>
+
+              )}
+
+            />
+            <Text style={{ fontSize: 20, color: '#514A9D', fontWeight: '700', margin: 10, alignSelf: 'flex-end' }}>Amount: ₹{TotalAmount}</Text>
+            <Text style={{ fontSize: 15, color: '#514A9D', fontWeight: '400', marginEnd: 10, alignSelf: 'flex-end', textDecorationLine: 'line-through' }}>Delivery: +{parseInt(DeliviryCharge) + 10}</Text>
+
+            <Text style={{ fontSize: 15, color: '#514A9D', fontWeight: '400', marginEnd: 10, alignSelf: 'flex-end' }}>Delivery: +{DeliviryCharge}</Text>
+
+
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 20, width: '90%', margin: 20, height: 100 }}>
+              <TouchableOpacity onPress={() => setIsModalVisible(false)} style={{ flex: 1, height: '100%', justifyContent: 'center', alignItems: 'center', flex: 1, borderRadius: 10, margin: 5 }}>
+                <Text style={{ fontSize: 20, color: '#514A9D', fontWeight: '900' }}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => onBuy()} style={{ height: '100%', paddingStart: 20, paddingEnd: 20, backgroundColor: '#514A9D', justifyContent: 'center', alignItems: 'center', borderRadius: 10, flex: 1, margin: 5 }}>
+                <Text style={{ fontSize: 20, color: 'white', fontWeight: '900' }}>Buy</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
         </ScrollView>
       </Modal>
 
@@ -605,18 +609,24 @@ export default function CartScreen({ navigation, route }) {
                 Empty
               </Text>
             </View>
+            <View style={{ width: '50%', alignItems: 'center', flexDirection: 'column' }}>
 
-            <Image
-              style={{ width: 100, height: 100, tintColor: '#e74c3c' }}
-              source={require('../../assets/shopping-cart.png')}></Image>
+              <Image
+                style={{ width: 100, height: 100, tintColor: '#e74c3c' }}
+                source={require('../../assets/shopping-cart.png')}></Image>
+
+              <TextInput style={{ height: 50, borderColor: 'grey', borderWidth: 1, backgroundColor: 'white', borderRadius: 10, padding: 10, margin: 10, fontSize: 18, fontWeight: '800', color: 'grey' }}
+                placeholder="Enter Refferal Code"
+                onChangeText={text => setRefferalCode(text)}
+                keyboardType='numeric'
+                value={RefferalCode}
+              />
+
+            </View>
           </View>
 
-          <Text style={{ fontSize: 18,margin:15,marginTop:55, fontWeight: '800', color: '#e74c3c' }}>Refferal Code:</Text>
-          <TextInput style={{ width: '90%', height: 50,borderColor:'grey',borderWidth:1, backgroundColor: 'white', borderRadius: 10, padding: 10, margin: 10, fontSize: 18, fontWeight: '800', color: 'grey' }}
-            placeholder="Enter Refferal Code"
-            onChangeText={text => setRefferalCode(text)}
-            value={RefferalCode}
-          />
+          {/* <Text style={{ fontSize: 18,margin:15,marginTop:55, fontWeight: '800', color: '#e74c3c' }}>Refferal Code:</Text> */}
+
 
 
           <FlatList

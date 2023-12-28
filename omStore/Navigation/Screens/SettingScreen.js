@@ -76,8 +76,8 @@ export default function SettingScreen() {
 
     
     if(helpNo != "" ){
-    firestore().collection('data').doc('helpline').set({
-      helpline:String(helpNo),
+    firestore().collection('helpline').doc('contactUs').set({
+      phone:String(helpNo),
       
     }).then(() => {
       ToastAndroid.show("Helpline Updated", ToastAndroid.SHORT);
@@ -93,8 +93,8 @@ export default function SettingScreen() {
 
     
     if(deliveryNo != "" ){
-    firestore().collection('data').doc('delivery').set({
-      delivery:String(deliveryNo),
+    firestore().collection('helpline').doc('delivery').set({
+      phone:String(deliveryNo),
       
     }).then(() => {
       ToastAndroid.show("Delivery Updated", ToastAndroid.SHORT);

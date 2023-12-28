@@ -6,6 +6,7 @@ import ItemCard from './ItemCard';
 import Spinner from 'react-native-loading-spinner-overlay';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import { SliderBox } from "react-native-image-slider-box";
+import ItemDaily from './ItemDaily';
 
 export default function Home({navigation, route}) {
   const [data, setData] = useState([]);
@@ -368,7 +369,7 @@ export default function Home({navigation, route}) {
 
         <FlatList 
         horizontal
-        style={{margin:20,borderRadius:10,borderWidth:1 ,flex:1, height:200}}
+        style={{margin:20,marginBottom:0,borderRadius:10,borderWidth:1 ,flex:1, height:200}}
         data={ImagesData}
         indicatorStyle='white'
         showsHorizontalScrollIndicator={true}
@@ -380,6 +381,8 @@ export default function Home({navigation, route}) {
           </View>
         )}
         />
+
+        <Text style={{textAlign:'center',top:-40,fontSize:60,color:'black' }}>. . . . .</Text>
 
         <Text style={{fontSize: 20,textDecorationLine:'underline', color: 'red',textAlign:'center', padding: 15, fontWeight: '900'}}> Deals of The Day </Text>
 
@@ -396,11 +399,11 @@ export default function Home({navigation, route}) {
             
           }}
           
-         
+          horizontal={true}
           data={dailyData}
           keyExtractor={item => item.productID}
           renderItem={({item}) => (
-            <ItemCard
+            <ItemDaily
               productName={item.productName}
               productID={item.productID}
               productPrice={item.productPrice}
