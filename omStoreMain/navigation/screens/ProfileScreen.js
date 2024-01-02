@@ -167,7 +167,7 @@ export default function ProfileScreen({navigation, route}) {
     <View>
 
 
-      <Modal visible={isModalVisible} animationType="slide" transparent>
+      <Modal onBackButtonPress={()=>setisModalVisible(false)} visible={isModalVisible} animationType="slide" transparent>
         <View style={{backgroundColor:'white', height:400,width:330 ,borderRadius:20, borderWidth:1, elevation:10, borderColor:'white'}}>
           <View style={{flex:1}}>
             <Text style={{fontSize:20, fontWeight:'900',color:'#514A9D',margin:20, textAlign:'center'}}>Update Address</Text>

@@ -10,10 +10,14 @@ import {
 } from 'react-native';
 import auth from '@react-native-firebase/auth';
 import RNFS from 'react-native-fs';
+import Modal from 'react-native-modal';
 
 const Login = ({navigation}) => {
   const [email, setEmail] = useState('');
+  const [ForgotEmail, setForgotEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
 
   var path = RNFS.DocumentDirectoryPath + '/test.txt';
@@ -26,6 +30,20 @@ const Login = ({navigation}) => {
 
   const gotoRegister = () => {
     navigation.navigate('Register');
+  };
+
+  const ForgotPassword = () => {
+    
+    auth().sendPasswordResetEmail(String(ForgotEmail))
+    .then(function (user) {
+      ToastAndroid.show('Email sent, Check Your Gmail App', ToastAndroid.SHORT);
+      setIsModalVisible(false);
+    })
+    .catch(function (e) {
+      console.log(e);
+    });
+
+
   };
 
   const onLogin = () => {
@@ -53,6 +71,24 @@ const Login = ({navigation}) => {
 
   return (
     <View style={styles.container}>
+
+      <Modal onBackButtonPress={() => setIsModalVisible(false)} isVisible={isModalVisible}>
+        <View style={{flex: 1, backgroundColor:'white', borderRadius:10, padding:50}}>
+          <Text style={{fontSize:30,fontWeight:'900',textAlign:'center', color:'black'}}>Forgot Password</Text>
+          <Text style={{fontSize:20,fontWeight:'900',marginTop:10 ,textAlign:'center', color:'black'}}>Enter your email address</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            value={ForgotEmail}
+            onChangeText={text => setForgotEmail(text)}
+            placeholderTextColor={'grey'}
+          />
+          <TouchableOpacity onPress={ForgotPassword}>
+            <Text style={{color:'black', textAlign:'center', fontSize:20, textDecorationLine:'underline'}}>Submit</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
+
       <ImageBackground
         source={require('../../assets/background.jpg')}
         style={{
@@ -92,6 +128,17 @@ const Login = ({navigation}) => {
           alignItems="center">
           <Text textAlign="center">New Here? Create Account !</Text>
         </TouchableOpacity>
+
+        <TouchableOpacity
+          style={{margin: 10}}
+          onPress={() => setIsModalVisible(true)}
+          textAlign="right"
+          justifyContent="center"
+          alignItems="center">
+          <Text textAlign="center">Forgot Password?</Text>
+        </TouchableOpacity>
+
+
       </ImageBackground>
     </View>
   );
@@ -120,6 +167,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     color: 'grey',
     borderRadius: 8,
+    borderColor:'grey',
+    borderWidth:0.5,
     padding: 16,
     marginBottom: 16,
   },

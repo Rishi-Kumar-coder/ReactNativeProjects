@@ -84,6 +84,11 @@ const [userEmail , setUserEmail] = useState('');
           navigation.goBack();
           
     
+        }).catch((error) => {
+            console.log(error.message);
+            setisSpinnerVisible(false);
+            ToastAndroid.show('Failed to add. Please try again.', ToastAndroid.SHORT);
+
         });
         
 

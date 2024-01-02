@@ -55,7 +55,7 @@ export default function CartScreen({ navigation, route }) {
   const [BillPDFPath, setBillPDFPath] = useState('');
   const [AllItems, setAllItems] = useState('');
   const [forBill, setForBill] = useState('');
-
+  const [loddingText, setLoaddingText] = useState('Please Wait...');
   var allItemString = '';
 
   const [qrCode1, setQrCode1] = useState('');
@@ -89,6 +89,8 @@ export default function CartScreen({ navigation, route }) {
 
 
   useEffect(() => {
+    setLoaddingText('Please Wait...');
+    setisSpinnerVisible(true);
     // Reference to your Firestore collection
     RNFS.readFile(path, 'utf8').then(contents => {
       setuserEmail(contents);
@@ -112,6 +114,7 @@ export default function CartScreen({ navigation, route }) {
         } else {
           // doc.data() will be undefined in this case
           console.log('No such document! in user');
+          setisSpinnerVisible(false);
         }
       })
 
@@ -159,7 +162,7 @@ export default function CartScreen({ navigation, route }) {
 
 
 
-          ToastAndroid.show(String(parseInt(element.productSelling) + parseInt(element.productDiscount)), ToastAndroid.SHORT);
+          // ToastAndroid.show(String(parseInt(element.productSelling) + parseInt(element.productDiscount)), ToastAndroid.SHORT);
           allItemString = allItemString + `<tr>
                 <td >`+ element.productName + `</td>
                 <td>`+ product_Cost + `</td>
@@ -180,6 +183,7 @@ export default function CartScreen({ navigation, route }) {
         setTotalCost(totalCost);
         setAllItems(allItemString);
         setForBill(allItemString);
+        setisSpinnerVisible(false);
       });
 
       return () => {
@@ -196,18 +200,12 @@ export default function CartScreen({ navigation, route }) {
 
   // });
 
-  function generateUUID(digits) {
-    let str = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVXZ';
-    let uuid = [];
-    for (let i = 0; i < digits; i++) {
-      uuid.push(str[Math.floor(Math.random() * str.length)]);
-    }
-    return uuid.join('');
-  }
+
 
   let onBuy = () => {
     var orderOTP = Math.floor(1000 + Math.random() * 9000);
 
+    setLoaddingText('Please Wait...');
     setisSpinnerVisible(true);
     if (data.length == 0) {
       ToastAndroid.show('Cart is Empty', ToastAndroid.SHORT);
@@ -423,6 +421,12 @@ export default function CartScreen({ navigation, route }) {
       directory: "",
     };
 
+    //in node_modules/react-native-html-to-pdf/android/src/main/java/com/rnhtmltopdf/RNHTMLtoPDFModule.java
+    //change line 44 from
+    //File output = new File(context.getCacheDir(), fileName);
+    //to
+    //File output = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), fileName);
+
     RNHTMLtoPDF.convert(options).then(filePath => {
       console.log('PDF generated', filePath);
       setBillPDFPath(filePath);
@@ -438,7 +442,7 @@ export default function CartScreen({ navigation, route }) {
 
 
 
-  let saveToGallery = async () => {
+  let saveToGallery = async (url) => {
     setisSpinnerVisible(true);
     if (Platform.OS === 'ios') {
       downloadImage();
@@ -453,9 +457,9 @@ export default function CartScreen({ navigation, route }) {
           }
         );
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          downloadImage();
+          downloadImage(url);
         } else {
-          downloadImage();
+          downloadImage(url);
 
         }
       } catch (err) {
@@ -465,13 +469,13 @@ export default function CartScreen({ navigation, route }) {
     }
   }
 
-  const downloadImage = () => {
+  const downloadImage = (url) => {
     // Main function to download the image
 
     // To add the time suffix in filename
     let date = new Date();
     // Image URL which we want to download
-    let image_URL = qrCode;
+    let image_URL = url;
     // Getting the extention of the file
     let ext = '.png';
     // ext = '.' + ext[0];
@@ -511,45 +515,68 @@ export default function CartScreen({ navigation, route }) {
 
   return (
     <>
-      <Spinner visible={isSpinnerVisible} textContent={'Placing Order...'} textStyle={{ color: 'white' }} />
+      <Spinner  visible={isSpinnerVisible} textContent={loddingText} textStyle={{ color: 'white' }} />
 
 
 
 
-      <Modal visible={isModalVisible} transparent={true}>
+      <Modal onBackButtonPress={() => setIsModalVisible(false)} visible={isModalVisible} transparent={true} >
         <ScrollView>
           <View style={{ flex: 1, backgroundColor: 'white', borderRadius: 20 }}>
             <Text style={{ fontSize: 30, margin: 20, color: '#514A9D', fontWeight: '900' }}>Pay At</Text>
-            <Text style={{textAlign:'center',color:'#514A9D'}}>Phone Pay</Text>
+            <Text style={{ textAlign: 'center', color: '#514A9D',marginBottom:10 }}>Click Images To Save</Text>
+
+            <View style={{flexDirection:'row'}}>
+
+              <View style={{flexDirection:'column',flex:1}}>
+
+            <Text style={{ textAlign: 'center', color: '#514A9D' }}>Phone Pay</Text>
+            <Image style={{height:30, alignContent:'center', alignSelf:'center'}} resizeMode='contain' source={require('../../assets/phonepay.png')}></Image>
             <ImageBackground resizeMode='contain' style={{ height: 200, width: '100%', alignSelf: 'center' }}
               source={{ uri: qrCode1 }}
 
             >
-              <TouchableOpacity onPress={saveToGallery} style={{ height: 200, width: '100%' }}></TouchableOpacity>
+              <TouchableOpacity onPress={() => saveToGallery(qrCode1)} style={{ height: 200, width: '100%' }}></TouchableOpacity>
 
 
             </ImageBackground>
-            <Text style={{textAlign:'center',color:'#514A9D'}}>Google Pay</Text>
+
+            </View>
+
+            <View style={{flexDirection:'column',flex:1}}>
+
+            <Text style={{ textAlign: 'center', color: '#514A9D' }}>Google Pay</Text>
+            <Image style={{height:30, alignContent:'center', alignSelf:'center'}} resizeMode='contain' source={require('../../assets/googlepay.png')}></Image>
 
             <ImageBackground resizeMode='contain' style={{ height: 200, width: '100%', alignSelf: 'center' }}
               source={{ uri: qrCode2 }}
 
             >
-              <TouchableOpacity onPress={saveToGallery} style={{ height: 200, width: '100%' }}></TouchableOpacity>
+              <TouchableOpacity onPress={() => saveToGallery(qrCode2)} style={{ height: 200, width: '100%' }}></TouchableOpacity>
 
 
             </ImageBackground>
-            <Text style={{textAlign:'center',color:'#514A9D'}}>Paytm</Text>
+
+            </View>
+
+            <View style={{flexDirection:'column',flex:1}}>
+
+            
+            <Text style={{ textAlign: 'center', color: '#514A9D' }}>Paytm</Text>
+            <Image style={{height:30,width:30, alignContent:'center', alignSelf:'center'}} resizeMode='contain' source={require('../../assets/paytm.png')}></Image>
+
 
             <ImageBackground resizeMode='contain' style={{ height: 200, width: '100%', alignSelf: 'center' }}
               source={{ uri: qrCode3 }}
 
             >
-              <TouchableOpacity onPress={saveToGallery} style={{ height: 200, width: '100%' }}></TouchableOpacity>
+              <TouchableOpacity onPress={() => saveToGallery(qrCode3)} style={{ height: 200, width: '100%' }}></TouchableOpacity>
 
 
             </ImageBackground>
 
+            </View>
+            </View>
 
             <Text style={{ fontSize: 30, margin: 20, color: '#514A9D', fontWeight: '900' }}>Order</Text>
 
@@ -648,7 +675,7 @@ export default function CartScreen({ navigation, route }) {
                 style={{ width: 100, height: 100, tintColor: '#e74c3c' }}
                 source={require('../../assets/shopping-cart.png')}></Image>
 
-              <TextInput style={{top:-70,opacity:0, height: 50, borderColor: 'grey', borderWidth: 1, backgroundColor: 'white', borderRadius: 10, padding: 10, margin: 10, fontSize: 18, fontWeight: '800', color: 'grey' }}
+              <TextInput style={{ top: -70, borderColor: 'grey', fontSize: 10, color: 'grey' }}
                 placeholder="Enter Refferal Code"
                 onChangeText={text => setRefferalCode(text)}
                 keyboardType='numeric'

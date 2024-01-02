@@ -112,9 +112,11 @@ export default function OrderCard({orderId,TotalCost,orderRefferal, TotalDiscoun
 <tr>
 <th>Product Name</th>
 <th>Price</th>
+<th>GST(%)</th>
+
 <th>Discount</th>
 <th>Quantity</th>
-
+    ]
 <th>Total</th>
 </tr>
 
