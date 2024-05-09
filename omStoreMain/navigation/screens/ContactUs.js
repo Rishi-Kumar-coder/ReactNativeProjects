@@ -36,7 +36,11 @@ export default function ContactUs() {
     <ImageBackground source={require('../../assets/backGround_3.jpg')} resizeMode='cover' style={{width:'100%', height:'100%',alignContent:'center',justifyContent:'center'}}>
    <View>
     <Text style={{fontSize: 40, color:'#514A9D', fontWeight:'900',letterSpacing:5, textAlign:'center',margin:10}}>Contact Us</Text>
-    <Image source={require('../../assets/phone.png')} resizeMode='contain' style={{width:'100%',tintColor:'#514A9D', height:80,margin:10}}/>
+    <View style={{flexDirection:'row',justifyContent:'space-evenly', alignItems:'center'}}>
+    <Image source={require('../../assets/phone.png')} resizeMode='contain' style={{width:'50%',tintColor:'#514A9D', height:80,margin:10}}/>
+    <Image source={require('../../assets/whatsapp.png')} resizeMode='contain' style={{width:'50%', height:80,margin:10}}/>
+    
+    </View>
     <Text style={{fontSize: 30, color:'#514A9D', fontWeight:'800',letterSpacing:5, textAlign:'center',margin:10}}>At</Text>
     <TouchableOpacity onPress={copyToClipboard}>
     <Text style={{fontSize: 30, color:'#514A9D', fontWeight:'800',letterSpacing:5, textAlign:'center',margin:10}}>+91 {phone}</Text>

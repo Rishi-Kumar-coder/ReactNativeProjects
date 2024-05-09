@@ -120,6 +120,17 @@ export default function OrderCard({userEmail, orderId,orderOTP ,AllItem, navigat
             style={{
               fontSize: 15,
               fontWeight: '400',
+              color: 'green',
+              fontWeight: '800',
+              marginTop: 0,
+            }}>
+            Total: ₹{parseFloat(orderAmount) + parseFloat(orderDeleviryCharge)}
+          </Text>
+
+          <Text
+            style={{
+              fontSize: 15,
+              fontWeight: '400',
               color: statusColor,
               fontWeight: '800',
               marginTop: 0,

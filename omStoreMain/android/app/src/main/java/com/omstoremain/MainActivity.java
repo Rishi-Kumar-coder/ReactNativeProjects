@@ -1,4 +1,4 @@
-package com.omstoremain;
+package com.omstoremain32;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;

@@ -22,6 +22,8 @@ import Modal from 'react-native-modal';
 import Spinner from 'react-native-loading-spinner-overlay';
 import RNFetchBlob from 'rn-fetch-blob';
 import RNHTMLtoPDF from 'react-native-html-to-pdf';
+import auth from '@react-native-firebase/auth';
+
 // import { PermissionsAndroid,Platform } from 'react-native';
 
 
@@ -42,7 +44,7 @@ export default function CartScreen({ navigation, route }) {
   const [TotalDiscount, setTotalDiscount] = useState('');
   const [TotalCost, setTotalCost] = useState('');
   const [orderID, setOrderID] = useState('');
-  const [RefferalCode, setRefferalCode] = useState('');
+  const [RefferalCode, setRefferalCode] = useState('0000');
   const [data, setData] = useState([]);
   const [TotalAmount, setToatalAmount] = useState(0);
   const [IsEmpty, setIsEmpty] = useState(1);
@@ -87,41 +89,59 @@ export default function CartScreen({ navigation, route }) {
     }
   })
 
+  if(DeliviryCharge == 0 || DeliviryCharge == ''|| DeliviryCharge=='0'){
+    // setisSpinnerVisible(true);
+    // ToastAndroid.show('1',ToastAndroid.SHORT);
+  
+
+}
+
+
+
 
   useEffect(() => {
     setLoaddingText('Please Wait...');
     setisSpinnerVisible(true);
+    auth().currentUser.email;
+    ToastAndroid.show(auth().currentUser.email,ToastAndroid.SHORT);
     // Reference to your Firestore collection
-    RNFS.readFile(path, 'utf8').then(contents => {
+    let contents = auth().currentUser.email;
+      
       setuserEmail(contents);
-
-      firestore().collection('users').doc(contents).get().then(doc => {
-        if (doc.exists) {
-          setPostOffice(doc.data().postOffice);
-          setRefferalCode(doc.data().refferal);
-
-
-          firestore().collection('data').doc(String(doc.data().postOffice)).get().then(doc => {
-            if (doc.exists) {
-              setDeliveryCharge(doc.data().postValue);
-              setisSpinnerVisible(false);
-            } else {
-              // doc.data() will be undefined in this case
-              console.log('No such document! in post ');
-            }
-          })
-
-        } else {
-          // doc.data() will be undefined in this case
-          console.log('No such document! in user');
-          setisSpinnerVisible(false);
-        }
-      })
+      
 
       const collectionRef = firestore()
         .collection('cart')
         .doc(contents)
         .collection('products');
+
+        firestore().collection('users').doc(auth().currentUser.email).get().then(doc => {
+          if (doc.exists) {
+            setPostOffice(doc.data().postOffice);
+            setRefferalCode(doc.data().refferal);
+      
+            // ToastAndroid.show('2',ToastAndroid.SHORT);
+      
+            firestore().collection('data').doc(doc.data().postOffice).get().then(doc => {
+              if (doc.exists) {
+          // ToastAndroid.show('3',ToastAndroid.SHORT);
+      
+                setDeliveryCharge(doc.data().postValue);
+                setisSpinnerVisible(false);
+              } else {
+                // doc.data() will be undefined in this case
+                console.log('No such document! in post ');
+                setisSpinnerVisible(false);
+      
+              }
+            })
+      
+          } else {
+            // doc.data() will be undefined in this case
+            console.log('No such document! in user');
+            setisSpinnerVisible(false);
+          }
+        })
 
       const unsubscribe = collectionRef.onSnapshot(snapshot => {
         const items = snapshot.docs.map(doc => ({
@@ -166,7 +186,7 @@ export default function CartScreen({ navigation, route }) {
           allItemString = allItemString + `<tr>
                 <td >`+ element.productName + `</td>
                 <td>`+ product_Cost + `</td>
-                <td>`+ element.productGST + `%</td>
+                <td>`+ element.productGST + `</td>
 
                 <td>`+ element.productDiscount + `</td>
                 <td>`+ element.productCount + `</td>
@@ -183,7 +203,7 @@ export default function CartScreen({ navigation, route }) {
         setTotalCost(totalCost);
         setAllItems(allItemString);
         setForBill(allItemString);
-        setisSpinnerVisible(false);
+        // setisSpinnerVisible(false);
       });
 
       return () => {
@@ -192,7 +212,7 @@ export default function CartScreen({ navigation, route }) {
 
 
 
-    })
+    
 
 
   }, []);
@@ -231,10 +251,9 @@ export default function CartScreen({ navigation, route }) {
       const currentDate = date + '/' + month + '/' + year;
       const currentTime = hour + ':' + min;
 
-      const orderID = String(date) + String(month) + String(year) + String(hour) + String(min) + String(sec);
+      const orderID = String(year) + String(month) +String(date) +   String(hour) + String(min) + String(sec);
 
-      RNFS.readFile(path, 'utf8')
-        .then(contents => {
+      let contents = auth().currentUser.email;
           setuserEmail(contents);
 
           firestore().collection('users').doc(contents).update({
@@ -263,7 +282,7 @@ export default function CartScreen({ navigation, route }) {
                 setOrderTime(currentTime);
                 setOrderAmount(TotalAmount);
                 setOrderID(orderID);
-                // setRefferalCode(refferal);
+                setRefferalCode(refferal);
 
 
 
@@ -403,12 +422,7 @@ export default function CartScreen({ navigation, route }) {
 
 
 
-        })
-        .catch(err => {
-          //Reading File Error
-          console.log(err.message);
-          setisSpinnerVisible(false);
-        });
+        
     }
   };
 
@@ -515,7 +529,7 @@ export default function CartScreen({ navigation, route }) {
 
   return (
     <>
-      <Spinner  visible={isSpinnerVisible} textContent={loddingText} textStyle={{ color: 'white' }} />
+      <Spinner onBackButtonPress={()=>setisSpinnerVisible(false)} visible={isSpinnerVisible} textContent={loddingText} textStyle={{ color: 'white' }} />
 
 
 
@@ -524,9 +538,9 @@ export default function CartScreen({ navigation, route }) {
         <ScrollView>
           <View style={{ flex: 1, backgroundColor: 'white', borderRadius: 20 }}>
             <Text style={{ fontSize: 30, margin: 20, color: '#514A9D', fontWeight: '900' }}>Pay At</Text>
-            <Text style={{ textAlign: 'center', color: '#514A9D',marginBottom:10 }}>Click Images To Save</Text>
+            <Text style={{ textAlign: 'right',top:-30,paddingRight:30, color: '#514A9D',marginBottom:10 }}>Click Images To Save and Pay</Text>
 
-            <View style={{flexDirection:'row'}}>
+            <View style={{flexDirection:'row', top:-30}}>
 
               <View style={{flexDirection:'column',flex:1}}>
 
@@ -578,9 +592,9 @@ export default function CartScreen({ navigation, route }) {
             </View>
             </View>
 
-            <Text style={{ fontSize: 30, margin: 20, color: '#514A9D', fontWeight: '900' }}>Order</Text>
+            <Text style={{ fontSize: 30,top:-30, margin: 20, color: '#514A9D', fontWeight: '900' }}>Order</Text>
 
-            <FlatList style={{ width: '90%', alignSelf: 'center', borderRadius: 10, borderWidth: 0.5, borderColor: 'black' }}
+            <FlatList style={{ width: '90%',top:-30, alignSelf: 'center', borderRadius: 10, borderWidth: 0.5, borderColor: 'black' }}
               data={data}
               keyExtractor={item => item.productID}
 
@@ -596,10 +610,16 @@ export default function CartScreen({ navigation, route }) {
               )}
 
             />
-            <Text style={{ fontSize: 20, color: '#514A9D', fontWeight: '700', margin: 10, alignSelf: 'flex-end' }}>Amount: ₹{TotalAmount}</Text>
-            <Text style={{ fontSize: 15, color: '#514A9D', fontWeight: '400', marginEnd: 10, alignSelf: 'flex-end', textDecorationLine: 'line-through' }}>Delivery: +{parseInt(DeliviryCharge) + 10}</Text>
+            <Text style={{ fontSize: 20, color: '#514A9D', fontWeight: '700', margin: 10, alignSelf: 'flex-end' }}>Net: ₹{TotalAmount}</Text>
+            <View style={{flexDirection:'row', alignContent:'flex-end', justifyContent:'flex-end'}}>
+            <Text style={{ fontSize: 15, color: '#514A9D', fontWeight: '400', marginEnd: 10, alignSelf: 'flex-end' }}>Delivery Charge:</Text>
+            
+            <Text style={{ fontSize: 15, color: '#514A9D', fontWeight: '400', marginEnd: 10, alignSelf: 'flex-end', textDecorationLine: 'line-through' }}>+{parseInt(DeliviryCharge) + 10}</Text>
 
-            <Text style={{ fontSize: 15, color: '#514A9D', fontWeight: '400', marginEnd: 10, alignSelf: 'flex-end' }}>Delivery: +{DeliviryCharge}</Text>
+            <Text style={{ fontSize: 15, color: '#514A9D', fontWeight: '400', marginEnd: 10, alignSelf: 'flex-end' }}> +{DeliviryCharge}</Text>
+            </View>
+
+            <Text style={{ fontSize: 20, color: '#514A9D', fontWeight: '700', margin: 10, alignSelf: 'flex-end' }}>Total: ₹{(parseFloat(TotalAmount) + parseFloat(DeliviryCharge))/1.00}</Text>
 
 
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 20, width: '90%', margin: 20, height: 100 }}>
@@ -675,10 +695,15 @@ export default function CartScreen({ navigation, route }) {
                 style={{ width: 100, height: 100, tintColor: '#e74c3c' }}
                 source={require('../../assets/shopping-cart.png')}></Image>
 
-              <TextInput style={{ top: -70, borderColor: 'grey', fontSize: 10, color: 'grey' }}
+              <Text style={{ top: -60, borderColor: 'grey', fontSize: 10, color: 'grey' }}
+                              
+                              
+                            >Enter Refferal Code</Text>
+
+              <TextInput style={{ top: -55,paddingStart:10,marginStart:10, borderColor: 'grey', fontSize: 10, color: 'grey' }}
                 placeholder="Enter Refferal Code"
                 onChangeText={text => setRefferalCode(text)}
-                keyboardType='numeric'
+                
                 value={RefferalCode}
               />
 
@@ -736,7 +761,7 @@ export default function CartScreen({ navigation, route }) {
                   alignSelf: 'flex-start',
                   marginLeft: 25,
                 }}>
-                ₹{String(TotalAmount)}
+                ₹{String(TotalAmount)} + ₹{String(DeliviryCharge)} = ₹{(parseFloat(DeliviryCharge) + parseFloat(TotalAmount))/1.00}
               </Text>
             </View>
 

@@ -1,4 +1,4 @@
-package com.omstoremain;
+package com.omstoremain32;
 
 import android.app.Application;
 import com.facebook.react.PackageList;

@@ -14,19 +14,21 @@ export default function Home({navigation, route}) {
   const [searchQuerry, setSearchQuerry] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [ImagesData, setImagesData] = useState([]);
+  const [isLoadingImages, setIsLoadingImages] = useState(true);
+  
   // const [ImagesData, setImagesData] = useState([{url : 'https://firebasestorage.googleapis.com/v0/b/omstore-ed85b.appspot.com/o/adphoto%2F1?alt=media&token=334bba13-23bd-41e6-85f7-8e34a4070206'}
   //                                               ,{url : 'https://firebasestorage.googleapis.com/v0/b/omstore-ed85b.appspot.com/o/adphoto%2F1?alt=media&token=334bba13-23bd-41e6-85f7-8e34a4070206'}
   //                                             ,{url : 'https://firebasestorage.googleapis.com/v0/b/omstore-ed85b.appspot.com/o/adphoto%2F1?alt=media&token=334bba13-23bd-41e6-85f7-8e34a4070206'}
   //                                           ,{url : 'https://firebasestorage.googleapis.com/v0/b/omstore-ed85b.appspot.com/o/adphoto%2F1?alt=media&token=334bba13-23bd-41e6-85f7-8e34a4070206'}
   //                                         ,{url : 'https://firebasestorage.googleapis.com/v0/b/omstore-ed85b.appspot.com/o/adphoto%2F1?alt=media&token=334bba13-23bd-41e6-85f7-8e34a4070206'}]);
   const Category_data = [
-    { category: '', items: require('../../assets/all.png') ,search:''},
+    { category: 'Category', items: require('../../assets/all.png') ,search:''},
 
     { category: 'Electrical', items: require('../../assets/electrical.jpeg'),search:'Electrical' },
     { category: 'Electronics', items: require('../../assets/electronics.jpeg'),search:'Electronics' },
-    { category: 'Hardware', items: require('../../assets/hardware.jpeg'),search:'Hardware'},
+    { category: 'Hardware', items: require('../../assets/nutbolt.jpeg'),search:'Hardware'},
     { category: 'Tape Fittings', items: require('../../assets/tape.jpeg'),search:'Tape Fitting'},
-    { category: 'Tools', items: require('../../assets/powerTool.jpeg'),search:'Tools And PowerTools'},
+    { category: 'Tools', items: require('../../assets/hardware.jpeg'),search:'Tools And PowerTools'},
     { category: 'Agriculture', items: require('../../assets/agricultureMachine.jpg'),search:'Machinery Agriculture'},
     { category: 'Paints', items: require('../../assets/paint.jpeg'),search:'Paint'},
     { category: 'General', items: require('../../assets/generalStore.jpeg') ,search:'General Store'},
@@ -154,11 +156,12 @@ export default function Home({navigation, route}) {
       const items = snapshot.docs.map(doc => ({
        url: doc.data().url,
       }));
+      setIsLoadingImages(false);
       
 
       setImagesData(items);
 
-      // console.log(ImagesData);      
+      console.log(ImagesData);      
     });
 
     return () => {
@@ -342,6 +345,8 @@ export default function Home({navigation, route}) {
         textStyle={{color: '#FFF'}}
       />
 
+      
+
 
       <ImageBackground
         source={require('../../assets/home_Background.jpg')}
@@ -367,17 +372,38 @@ export default function Home({navigation, route}) {
           Om.in
         </Text>
 
+        <Text
+          style={{
+            fontSize: 28,
+            color: 'white',
+            width: '100%',
+            
+            
+            fontWeight: '900',
+            textAlign: 'center',
+            fontFamily: 'impact',
+          }}>
+          आधे दाम की दुकान
+        </Text>
+
         <FlatList 
         horizontal
-        style={{margin:20,marginBottom:0,borderRadius:10,borderWidth:1 ,flex:1, height:200}}
+        style={{margin:20,marginBottom:0,borderRadius:10,backgroundColor:'white', borderWidth:1 ,flex:1, height:200}}
         data={ImagesData}
-        indicatorStyle='white'
+        indicatorStyle={{backgroundColor:'white',height:10, width:10, borderRadius:5, margin:5}}
+        // indicatorStyle='white'
         showsHorizontalScrollIndicator={true}
         
         keyExtractor={(item) => item.url}
         renderItem={({item}) => (
-          <View style={{flex:1,width:300, height:200}}>
-          <ImageBackground overflow='hidden' source={{uri:item.url}} style={{flex:1, height:200, resizeMode:'contain'}}></ImageBackground>
+          <View style={{flex:1,width:300, height:195, marginBottom:5}}>
+      <Spinner
+        visible={isLoadingImages}
+        textContent={''}
+        textStyle={{color: '#FFF'}}
+        style={{height:200}}
+      />
+          <ImageBackground overflow='hidden' source={{uri:item.url}} style={{flex:1, height:200, resizeMode:'contain',marginRight:2,borderRadius:5,overflow:'hidden'}}></ImageBackground>
           </View>
         )}
         />

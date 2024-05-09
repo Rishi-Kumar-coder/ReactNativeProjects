@@ -40,7 +40,9 @@ const Login = ({navigation}) => {
       setIsModalVisible(false);
     })
     .catch(function (e) {
+
       console.log(e);
+      
     });
 
 

@@ -6,11 +6,11 @@ import RNFS from 'react-native-fs';
 import Spinner from 'react-native-loading-spinner-overlay';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import Modal from 'react-native-modal';
-
+import auth from '@react-native-firebase/auth';
 
 export default function ProductView({route, navigation}) {
 
-    const {productID,images,productNameHindi, productForDelivery,productCatagory, productSubCatagory,productName,productSeller ,productCode, productSelling,productDescription, productPrice, productDiscount, productUrl, ListImageURL,productGST} = route.params;
+    let {productID,images,productNameHindi, productForDelivery,productCatagory, productSubCatagory,productName,productSeller ,productCode, productSelling,productDescription, productPrice, productDiscount, productUrl, ListImageURL,productGST} = route.params;
 
     const productSP = parseInt(productPrice) - parseInt(productDiscount);
 const [userEmail , setUserEmail] = useState('');
@@ -24,6 +24,8 @@ const [userEmail , setUserEmail] = useState('');
         productUrl, ListImageURL
       ]);
 
+
+
       
 
       
@@ -35,18 +37,20 @@ const [userEmail , setUserEmail] = useState('');
 
 
     var path = RNFS.DocumentDirectoryPath + '/test.txt';
-    RNFS.readFile(path, 'utf8').then((contents) => {
+
+    
+    if(productGST == '0' || productGST == 0){
+        productGST = 'Paid';
+    }
+    else{
+        productGST = String(productGST)+'%';
+    }
+   
       // console.log(contents);
 
 
   
-     setUserEmail(contents);
-    //   ToastAndroid.show(userEmail, ToastAndroid.SHORT);
-  
-      return contents;
-    }).catch((err) => {
-      console.log(err.message);
-    });
+    
     
 
     console.log(images);
@@ -63,8 +67,9 @@ const [userEmail , setUserEmail] = useState('');
     const onAddCart = async ()=>{
 
         setisSpinnerVisible(true);
+        // setUserEmail(auth().currentUser.email);
 
-        firestore().collection('cart').doc(userEmail).collection('products').doc(productID).set({
+        firestore().collection('cart').doc(auth().currentUser.email).collection('products').doc(productID).set({
             productID: productID,
             productName: productName,
             productDescription: productDescription,
@@ -194,7 +199,7 @@ const [userEmail , setUserEmail] = useState('');
         <Text style={style.productTitle}>{productCode}</Text>
         <Text style={style.productDescription}>{productCatagory},{productSubCatagory}</Text>
         <Text style={style.productDescription}>by:{productSeller}</Text>
-        <Text style={style.productDescription}>GST: {productGST}%</Text>
+        <Text style={style.productDescription}>GST: {productGST}</Text>
 
         <Text style={style.productDescription}>{productDescription}</Text>
 
