@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import {Text, View, FlatList, TextInput,Image, TouchableOpacity} from 'react-native'
+import {View, FlatList, TextInput,Image, TouchableOpacity, BackHandler} from 'react-native'
 import firestore from '@react-native-firebase/firestore';
 import ItemCard from './itemCard';
 // import { Image } from 'react-native-paper/lib/typescript/components/Avatar/Avatar';
@@ -10,8 +10,6 @@ export default function MainScreen({navigation}) {
   const [data, setData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchCode, setSearchCode] = useState("");
-  const [inputPass, setInputPass] = useState("");
-  const [passWordModal , setPassWordModal] = useState(false);
   const [isLoading , setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -30,11 +28,13 @@ export default function MainScreen({navigation}) {
         productPrice: doc.data().productPrice,
         productDiscount: doc.data().productDiscount,
         productImageUrl: doc.data().productImageUrl,
+        productListImageUrl: doc.data().productListImageUrl,
         productID: doc.data().productID,
         productGST: doc.data().productGST,
         productCode: doc.data().productCode,
         productSelling: doc.data().productSelling,
         forDelivery:doc.data().forDelivery,
+        productSeller:doc.data().productSeller,
         daily:doc.data().daily,
       }));
       setData(items);
@@ -45,12 +45,58 @@ export default function MainScreen({navigation}) {
     };
   }, []);
 
+
+  useEffect(() => {
+    const backAction = () => {
+     
+
+      const collectionRef = firestore().collection('products');
+
+    collectionRef.onSnapshot((snapshot) => {
+
+      const items = snapshot.docs.map((doc) => ({
+        
+        productName: doc.data().productName,
+        productHindiName: doc.data().productNameHindi,
+        productCategory: doc.data().productCatagory,
+        productSubCategory: doc.data().productSubCatagory,
+        productDescription: doc.data().productDescription,
+        productPrice: doc.data().productPrice,
+        productDiscount: doc.data().productDiscount,
+        productImageUrl: doc.data().productImageUrl,
+        productListImageUrl: doc.data().productListImageUrl,
+
+        productID: doc.data().productID,
+        productGST: doc.data().productGST,
+        productCode: doc.data().productCode,
+        productSelling: doc.data().productSelling,
+        forDelivery:doc.data().forDelivery,
+        productSeller:doc.data().productSeller,
+        daily:doc.data().daily,
+      }));
+      setData(items);
+    });
+
+
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, []);
+
+  
+
   async function search() {
     setIsLoading(true);
     const collectionRef = firestore().collection('products');
     const snapshot = await collectionRef
-      .where('search', '>=', searchQuery)
-      .where('search', '<=', searchQuery + '\uf8ff')
+      .where('search', '>=', searchQuery.toLowerCase())
+      .where('search', '<=', searchQuery.toLowerCase() + '\uf8ff')
       .get();
     const items = snapshot.docs.map(doc => ({
        
@@ -62,11 +108,14 @@ export default function MainScreen({navigation}) {
       productPrice: doc.data().productPrice,
       productDiscount: doc.data().productDiscount,
       productImageUrl: doc.data().productImageUrl,
+      productListImageUrl: doc.data().productListImageUrl,
+
       productID: doc.data().productID,
       productGST: doc.data().productGST,
       productCode: doc.data().productCode,
       productSelling: doc.data().productSelling,
       forDelivery:doc.data().forDelivery,
+      productSeller:doc.data().productSeller,
       daily:doc.data().daily,
 
     }));
@@ -78,8 +127,8 @@ export default function MainScreen({navigation}) {
     setIsLoading(true);
     const collectionRef = firestore().collection('products');
     const snapshot = await collectionRef
-      .where('productCode', '>=', searchCode)
-      .where('productCode', '<=', searchCode + '\uf8ff')
+      .where('productCode', '>=', searchCode.toLowerCase())
+      .where('productCode', '<=', searchCode.toLowerCase() + '\uf8ff')
       .get();
     const items = snapshot.docs.map(doc => ({
        
@@ -91,6 +140,8 @@ export default function MainScreen({navigation}) {
       productPrice: doc.data().productPrice,
       productDiscount: doc.data().productDiscount,
       productImageUrl: doc.data().productImageUrl,
+      productListImageUrl: doc.data().productListImageUrl,
+
       productID: doc.data().productID,
       productGST: doc.data().productGST,
       productCode: doc.data().productCode,
@@ -143,6 +194,7 @@ export default function MainScreen({navigation}) {
                                             productPrice={item.productPrice}
                                             productDiscount={item.productDiscount}
                                             productUrl={item.productImageUrl}
+                                            productListUrl={item.productListImageUrl}
                                             navigation={navigation}
                                             productDescription={item.productDescription} 
                                             productCode={item.productCode}
@@ -152,6 +204,7 @@ export default function MainScreen({navigation}) {
                                             productSubCategory={item.productSubCategory}
                                             productHindiName={item.productHindiName}
                                             forDelivery={item.forDelivery}
+                                            productSeller={item.productSeller}
                                             daily={item.daily} />}
       />
     </View>

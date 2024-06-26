@@ -1,11 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {Text, View, ImageBackground, FlatList, TextInput, Image, TouchableOpacity, ToastAndroid, ScrollView, BackHandler} from 'react-native';
-import  {firebase} from '@react-native-firebase/auth';
+// import  {firebase} from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import ItemCard from './ItemCard';
 import Spinner from 'react-native-loading-spinner-overlay';
-import ImageViewer from 'react-native-image-zoom-viewer';
-import { SliderBox } from "react-native-image-slider-box";
+
 import ItemDaily from './ItemDaily';
 
 export default function Home({navigation, route}) {
@@ -15,7 +14,7 @@ export default function Home({navigation, route}) {
   const [isLoading, setIsLoading] = useState(false);
   const [ImagesData, setImagesData] = useState([]);
   const [isLoadingImages, setIsLoadingImages] = useState(true);
-  
+
   // const [ImagesData, setImagesData] = useState([{url : 'https://firebasestorage.googleapis.com/v0/b/omstore-ed85b.appspot.com/o/adphoto%2F1?alt=media&token=334bba13-23bd-41e6-85f7-8e34a4070206'}
   //                                               ,{url : 'https://firebasestorage.googleapis.com/v0/b/omstore-ed85b.appspot.com/o/adphoto%2F1?alt=media&token=334bba13-23bd-41e6-85f7-8e34a4070206'}
   //                                             ,{url : 'https://firebasestorage.googleapis.com/v0/b/omstore-ed85b.appspot.com/o/adphoto%2F1?alt=media&token=334bba13-23bd-41e6-85f7-8e34a4070206'}

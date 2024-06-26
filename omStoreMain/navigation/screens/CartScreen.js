@@ -103,7 +103,7 @@ export default function CartScreen({ navigation, route }) {
     setLoaddingText('Please Wait...');
     setisSpinnerVisible(true);
     auth().currentUser.email;
-    ToastAndroid.show(auth().currentUser.email,ToastAndroid.SHORT);
+    // ToastAndroid.show(auth().currentUser.email,ToastAndroid.SHORT);
     // Reference to your Firestore collection
     let contents = auth().currentUser.email;
       
@@ -231,7 +231,7 @@ export default function CartScreen({ navigation, route }) {
       ToastAndroid.show('Cart is Empty', ToastAndroid.SHORT);
       setisSpinnerVisible(false);
 
-      // console.log(val);
+      
       return;
 
     } else {
@@ -701,7 +701,7 @@ export default function CartScreen({ navigation, route }) {
                             >Enter Refferal Code</Text>
 
               <TextInput style={{ top: -55,paddingStart:10,marginStart:10, borderColor: 'grey', fontSize: 10, color: 'grey' }}
-                placeholder="Enter Refferal Code"
+                placeholder=""
                 onChangeText={text => setRefferalCode(text)}
                 
                 value={RefferalCode}
@@ -793,3 +793,7 @@ export default function CartScreen({ navigation, route }) {
     </>
   );
 }
+
+
+
+

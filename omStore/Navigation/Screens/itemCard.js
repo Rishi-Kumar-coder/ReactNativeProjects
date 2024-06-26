@@ -1,10 +1,9 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, ImageBackground,TouchableOpacity} from 'react-native';
+import { View, Text, StyleSheet, ImageBackground,TouchableOpacity} from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { NavigationContainer } from '@react-navigation/native';
 
 
-const ItemCard = ({productName,forDelivery,daily,productHindiName,productCategory,productSubCategory, productDescription, productUrl, productPrice,  productDiscount, productID,productCode, productGST, productSelling, navigation}) => {
+const ItemCard = ({productName,productListUrl,productSeller,forDelivery,daily,productHindiName,productCategory,productSubCategory, productDescription, productUrl, productPrice,  productDiscount, productID,productCode, productGST, productSelling, navigation}) => {
 
   
   
@@ -19,6 +18,7 @@ const ItemCard = ({productName,forDelivery,daily,productHindiName,productCategor
                                               productPrice: productPrice, 
                                               productDiscount: productDiscount, 
                                               productUrl: productUrl,
+                                              productListUrl: productListUrl,
                                             productGST: productGST,
                                           productCode: productCode,
                                         productSelling: productSelling,
@@ -26,6 +26,7 @@ const ItemCard = ({productName,forDelivery,daily,productHindiName,productCategor
                                     productSubCategory: productSubCategory,
                                   productHindiName: productHindiName,
                                 forDelivery: forDelivery,
+                                productSeller: productSeller,
                                 daily: daily,});
     
   }

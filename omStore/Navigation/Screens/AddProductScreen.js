@@ -73,6 +73,7 @@ const forDeleviry = [
   { label: 'Half Delivery Charge', SubCatagoryValue: '2' },
   { label: 'Quarter Delivery Charge', SubCatagoryValue: '2' },
 
+  
   { label: 'Free Delivery', SubCatagoryValue: '3' },
   { label: 'Delivery With Your Help', SubCatagoryValue: '3' },
 
@@ -117,11 +118,11 @@ const AddProductScreen = () => {
 
   const [modal, setmodal] = useState(false);
 
-  const [CatagoryValue, setCatagoryValue] = useState(null);
+  const [CatagoryValue, setCatagoryValue] = useState("Electrical");
   const [CatagoryisFocus, setCatagoryIsFocus] = useState(false);
 
   
-  const [SubCatagoryValue, setSubCatagoryValue] = useState(null);
+  const [SubCatagoryValue, setSubCatagoryValue] = useState("Electrical Fitting Products");
   const [SubCatagoryisFocus, setSubCatagoryIsFocus] = useState(false);
 
   const [Seller, setSeller] = useState("");
@@ -200,6 +201,17 @@ const AddProductScreen = () => {
     }
   }
 
+
+
+  
+  ToastAndroid.show(search.toLowerCase(), ToastAndroid.SHORT);
+
+    if(CatagoryValue == null || CatagoryValue == ""){
+      setCatagoryValue("Electrical");
+    }
+    if(SubCatagoryValue == null || SubCatagoryValue == ""){
+      setSubCatagoryValue("Electrical Fitting Products");
+    }
     const sellingPrice = (parseInt(productPrice) + (parseInt(productGST)/100)*parseInt(productPrice) ) - parseInt(productDiscount);
     const usersCollection = firestore().collection('products').doc(productID);
     usersCollection.set({
@@ -231,6 +243,13 @@ const AddProductScreen = () => {
   }
 
   const handleAddProduct = async () => {
+
+    // if(productCode == '' || productGST == '' || productDescription == '' || productPrice == '' || productName == '' || CatagoryValue == null || SubCatagoryValue == null || Seller == ''|| imageUri==""){
+
+    //   ToastAndroid.show("Please fill all the details", ToastAndroid.SHORT);
+    //   return;
+
+    // }
 
     setSpinner(true);
 

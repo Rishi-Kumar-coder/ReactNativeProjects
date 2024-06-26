@@ -73,9 +73,9 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "com.omstoremain32"
+    namespace "com.omstoremain07"
     defaultConfig {
-        applicationId "com.omstoremain32"
+        applicationId "com.omstoremain07"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

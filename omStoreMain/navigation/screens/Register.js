@@ -35,6 +35,7 @@ const Register = ({navigation}) => {
         address: address,
         email: email,
         postOffice: postOffice,
+        refferal: '0000',
         
         
     }).then(() => {
